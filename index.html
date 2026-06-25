@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holymake × Beata 選題系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#e07030;--orange-lt:#f09050;--orange-logo:#db6014;
+  --make-color:rgba(255,134,59,0.82);
+  --brown:#a05828;--brown-dk:#6b4423;--sage:#8a9e88;
+  --yellow:#d4c080;--cream:#f5f0e8;--offwhite:#faf8f4;
+  --dark:#2c1a0a;--muted:#6b4423;--muted2:#a07850;
+  --bg:var(--offwhite);--card:#fff;
+  --border:rgba(160,88,40,0.14);--border-md:rgba(160,88,40,0.24);
+  --leadership-bg:rgba(224,112,48,0.09);--leadership-c:#7a2e00;
+  --hjerte-bg:rgba(138,158,136,0.14);--hjerte-c:#2e4a2c;
+  --customer-bg:rgba(212,192,128,0.2);--customer-c:#5a4200;
+  --life-bg:rgba(107,68,35,0.09);--life-c:#3a1a00;
+  --green:#4a7a48;--green-bg:rgba(74,122,72,0.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans','Noto Serif TC',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+.app{max-width:940px;margin:0 auto;padding:0 0 100px}
+
+/* HERO */
+.hero{padding:44px 28px 28px;text-align:center;background:var(--card);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(224,112,48,0.07) 0%,transparent 68%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(138,158,136,0.1) 0%,transparent 70%);pointer-events:none}
+.logo-wrap{display:inline-flex;align-items:baseline;position:relative;z-index:1}
+.logo-holy{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:50px;line-height:1;color:var(--orange-logo)}
+.logo-make{font-family:'DM Sans',sans-serif;font-weight:700;font-size:50px;line-height:1;color:var(--make-color)}
+.logo-sub{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--orange-logo);margin-top:6px;position:relative;z-index:1}
+.hero-desc{font-size:11px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase;margin-top:3px;position:relative;z-index:1}
+.hero-badge{display:inline-block;margin-top:16px;background:var(--orange);color:#fff;font-size:14px;font-weight:600;padding:8px 24px;border-radius:24px;position:relative;z-index:1;letter-spacing:.3px}
+
+/* TABS */
+.tabs{display:flex;padding:0 28px;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;position:sticky;top:0;z-index:20}
+.tabs::-webkit-scrollbar{height:0}
+.tab{flex-shrink:0;padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab:hover:not(.active){color:var(--dark)}
+
+/* SECTIONS */
+.section{display:none;padding:32px 28px;animation:fadein .2s ease}
+.section.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* INTRO */
+.icard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:14px}
+.icard h2{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;color:var(--dark);margin-bottom:10px}
+.icard h3{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:10px}
+.icard p{font-size:13px;color:var(--muted);line-height:1.85}
+.icard ol{padding-left:18px;font-size:13px;color:var(--muted);line-height:2.2}
+.icard p+p{margin-top:8px}
+.ratio-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.r-cell{text-align:center;padding:16px 8px;border-radius:10px;border:1px solid var(--border)}
+.r-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1}
+.r-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin:4px 0 3px}
+.r-sub{font-size:11px;color:var(--muted2);line-height:1.5}
+.note-strip{background:rgba(224,112,48,0.06);border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:13px 16px;margin-bottom:14px}
+.note-strip h3{font-size:12px;font-weight:700;color:var(--orange);margin-bottom:4px}
+.note-strip p{font-size:12px;color:var(--muted);line-height:1.75}
+.cta-wrap{text-align:center;margin-top:22px}
+.cta-btn{padding:13px 36px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.cta-btn:hover{background:#c86020}
+.cta-hint{font-size:11px;color:var(--muted2);margin-top:8px}
+
+/* PROGRESS */
+.progress-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:22px}
+.progress-wrap h3{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.progress-wrap p{font-size:12px;color:var(--muted2);margin-bottom:11px}
+.pb-row{display:flex;align-items:center;gap:10px}
+.pb-track{flex:1;height:7px;background:rgba(160,88,40,0.12);border-radius:4px;overflow:hidden}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--orange-logo),var(--orange-lt));border-radius:4px;transition:width .4s ease}
+.pb-count{font-size:14px;font-weight:700;color:var(--orange);min-width:44px;text-align:right}
+.pb-clear{font-size:11px;color:var(--muted2);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* FILTER */
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.fb{padding:6px 14px;font-size:12px;font-weight:500;border:1px solid var(--border-md);background:var(--card);color:var(--muted2);border-radius:20px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.fb.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+.fb:hover:not(.active){color:var(--dark);border-color:var(--brown)}
+
+/* CAT DIVIDER */
+.cat-div{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;margin:28px 0 13px}
+.cat-div::after{content:'';flex:1;height:1px;background:currentColor;opacity:.16}
+.cat-div.leadership{color:var(--leadership-c)}
+.cat-div.hjerte{color:var(--hjerte-c)}
+.cat-div.customer{color:var(--customer-c)}
+.cat-div.life{color:var(--life-c)}
+
+/* TOPIC CARD */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:13px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.tc:hover{box-shadow:0 3px 18px rgba(160,88,40,0.1)}
+.tc.selected{border-color:var(--orange);box-shadow:0 0 0 2px rgba(224,112,48,.14)}
+.tc.hidden{display:none}
+.tc-top{padding:17px 17px 13px}
+.tc-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tc-code{font-size:10px;color:var(--muted2);font-weight:500}
+.tc-tag{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:2px 8px;border-radius:5px}
+.tag-leadership{background:var(--leadership-bg);color:var(--leadership-c)}
+.tag-hjerte{background:var(--hjerte-bg);color:var(--hjerte-c)}
+.tag-customer{background:var(--customer-bg);color:var(--customer-c)}
+.tag-life{background:var(--life-bg);color:var(--life-c)}
+.tc-title{font-family:'Noto Serif TC',serif;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;line-height:1.55}
+.tc-memory{font-size:11px;font-style:italic;color:var(--brown-dk);background:rgba(107,68,35,0.05);border-radius:6px;padding:6px 10px;margin-bottom:8px;line-height:1.65;border-left:2px solid var(--orange-lt)}
+.tc-desc{font-size:12px;color:var(--muted2);line-height:1.7}
+.tc-form{font-size:11px;color:var(--muted2);margin-top:7px;display:flex;align-items:center;gap:5px}
+.tc-form::before{content:'◈';font-size:9px;color:var(--orange);opacity:.7}
+
+/* ACCORDION */
+.acc-toggle{width:100%;padding:10px 17px;background:rgba(224,112,48,0.04);border:none;border-top:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--orange);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
+.acc-toggle:hover{background:rgba(224,112,48,0.08)}
+.acc-chev{transition:transform .2s;font-size:12px}
+.acc-body{display:none;padding:15px 17px;border-top:1px solid var(--border);background:#fffdf9}
+.acc-body.open{display:block}
+.acc-field{margin-bottom:13px}
+.acc-field:last-child{margin-bottom:0}
+.acc-field label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--orange);margin-bottom:5px;display:block}
+.acc-field p{font-size:12px;color:var(--muted2);line-height:1.7}
+
+/* SCRIPT STRUCTURE */
+.script-block{display:flex;flex-direction:column;gap:5px;margin-top:2px}
+.hook-item{font-size:12px;font-weight:700;color:var(--dark);padding:8px 12px;background:rgba(224,112,48,0.07);border-radius:6px;border-left:3px solid var(--orange);line-height:1.6}
+.script-step{display:grid;grid-template-columns:80px 1fr;gap:0;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.step-label{font-size:10px;font-weight:700;color:var(--card);padding:8px 10px;display:flex;align-items:center;line-height:1.4;letter-spacing:.5px}
+.step-label.s-qi{background:#b86020}
+.step-label.s-cheng{background:#a05828}
+.step-label.s-zhuan{background:#8a9e88;color:var(--dark)}
+.step-label.s-he{background:#6b4423}
+.step-content{font-size:12px;color:var(--muted);padding:8px 11px;background:var(--cream);line-height:1.65}
+
+/* Q LISTS */
+.q-list{display:flex;flex-direction:column;gap:5px;margin-top:2px}
+.q-item{font-size:12px;color:var(--dark);padding:6px 10px;background:var(--cream);border-radius:6px;border-left:2px solid var(--orange-lt);line-height:1.65}
+.q-rescue{border-left-color:var(--sage)}
+.q-confirm{border-left-color:var(--green);color:var(--green)}
+
+/* CHECKBOX */
+.tc-check-row{display:flex;align-items:center;gap:9px;padding:10px 17px;border-top:1px solid var(--border);cursor:pointer}
+.tc-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--orange);cursor:pointer;flex-shrink:0}
+.tc-check-row span{font-size:12px;color:var(--muted2)}
+.tc.selected .tc-check-row{background:rgba(224,112,48,0.04)}
+
+/* STATUS */
+.tc-status-row{padding:10px 17px;border-top:1px solid var(--border);display:none}
+.tc.selected .tc-status-row{display:block}
+.status-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:7px;display:block}
+.st-btns{display:flex;gap:6px;flex-wrap:wrap}
+.st-btn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid var(--border-md);background:var(--offwhite);color:var(--muted2);border-radius:6px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.st-btn:hover{border-color:var(--brown)}
+.st-btn.chosen-want{background:var(--orange);color:#fff;border-color:var(--orange)}
+.st-btn.chosen-backup{background:var(--sage);color:#fff;border-color:var(--sage)}
+.st-btn.chosen-adjust{background:var(--yellow);color:var(--dark);border-color:var(--yellow)}
+.st-btn.chosen-skip{background:var(--muted2);color:#fff;border-color:var(--muted2)}
+
+/* NOTE */
+.tc-note-wrap{padding:0 17px 14px;display:none}
+.tc.selected .tc-note-wrap{display:block}
+.tc-note{width:100%;border:1px solid var(--border-md);border-radius:7px;padding:8px 11px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--dark);background:var(--offwhite);resize:none;outline:none;min-height:52px;transition:border .2s}
+.tc-note:focus{border-color:var(--orange)}
+.tc-note::placeholder{color:#c09878}
+
+/* SUBMIT */
+.submit-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-top:26px}
+.submit-wrap label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;display:block}
+.global-note{width:100%;min-height:78px;border:1px solid var(--border-md);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);background:var(--offwhite);resize:vertical;outline:none;transition:border .2s}
+.global-note:focus{border-color:var(--orange)}
+.global-note::placeholder{color:#c09878}
+.submit-btn{margin-top:12px;width:100%;padding:13px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
+.submit-btn:hover{background:#c86020}
+.submit-btn:disabled{background:#c8a080;cursor:not-allowed}
+.submit-hint{font-size:11px;color:var(--muted2);margin-top:8px;text-align:center}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:11px 22px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* FOOTER */
+.footer{text-align:center;padding:26px;border-top:1px solid var(--border);margin-top:12px}
+.footer p{font-size:11px;color:var(--muted2)}
+
+@media(max-width:640px){
+  .logo-holy,.logo-make{font-size:38px}
+  .ratio-grid{grid-template-columns:repeat(2,1fr)}
+  .section{padding:24px 18px}
+  .tabs{padding:0 18px}
+  .script-step{grid-template-columns:64px 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hero">
+  <div class="logo-wrap">
+    <span class="logo-holy">Holy</span><span class="logo-make">make</span>
+  </div>
+  <div class="logo-sub">吼莉內容行銷</div>
+  <div class="hero-desc">SOCIAL MEDIA · VIDEOS AND CONTENT</div>
+  <div class="hero-badge">Beata &nbsp;×&nbsp; 內容選題系統</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('intro',this)">開始前請先看</button>
+  <button class="tab" onclick="showTab('topics',this)">選題清單</button>
+</div>
+
+<!-- 開始前請先看 -->
+<div id="intro" class="section active">
+  <div class="icard" style="text-align:center">
+    <h2>Beata 個人品牌內容計畫</h2>
+    <p>這份說明會幫你理解：這些題目是怎麼規劃出來的、每個方向的比例建議，<br>以及如何用選題讓觀眾認識真實的 Beata。請先看完再前往選題。</p>
+  </div>
+  <div class="icard">
+    <h3>這份表格要幫你完成什麼</h3>
+    <p>這份表不是單純的影片題目清單。它會協助我們確認 Beata 現階段應先被看見的樣子、哪些內容能建立人物辨識，以及每一次拍攝如何逐步累積成長期個人品牌。</p>
+  </div>
+  <div class="icard">
+    <h3>這些主題是怎麼規劃出來的？</h3>
+    <ol>
+      <li>Beata 本人的問卷、經驗與價值觀</li>
+      <li>目前帳號內容與既有影片</li>
+      <li>希望吸引的受眾與常見問題</li>
+      <li>市場上已有良好表現、並經人工審核的內容案例</li>
+    </ol>
+    <p style="margin-top:12px">我們只拆解有效的問題入口、衝突與影片結構，再依 Beata 的真實條件重新設計，不複製別人的故事、語氣或人設。</p>
+  </div>
+  <div class="icard">
+    <h3>本次拍攝建議比例</h3>
+    <p>共 20 題候選，建議選出 10 題，各方向建議數量如下：</p>
+    <div class="ratio-grid">
+      <div class="r-cell" style="background:var(--leadership-bg)">
+        <div class="r-num" style="color:var(--leadership-c)">3</div>
+        <div class="r-label" style="color:var(--leadership-c)">人才／領導</div>
+        <div class="r-sub">帶人視角與管理觀點</div>
+      </div>
+      <div class="r-cell" style="background:var(--hjerte-bg)">
+        <div class="r-num" style="color:var(--hjerte-c)">2</div>
+        <div class="r-label" style="color:var(--hjerte-c)">HJERTE</div>
+        <div class="r-sub">品牌故事與籌備過程</div>
+      </div>
+      <div class="r-cell" style="background:var(--customer-bg)">
+        <div class="r-num" style="color:var(--customer-c)">3</div>
+        <div class="r-label" style="color:var(--customer-c)">顧客專業</div>
+        <div class="r-sub">美髮專業與顧客情境</div>
+      </div>
+      <div class="r-cell" style="background:var(--life-bg)">
+        <div class="r-num" style="color:var(--life-c)">2</div>
+        <div class="r-label" style="color:var(--life-c)">生活／個性</div>
+        <div class="r-sub">人物辨識與個性展現</div>
+      </div>
+    </div>
+  </div>
+  <div class="note-strip">
+    <h3>選題時請確認</h3>
+    <p>是否為真實經驗、是否願意公開、說法是否符合本人，以及是否有案例或素材可拍。每題都附有「拍攝前待確認」欄位，選完後請一併確認。</p>
+  </div>
+  <div class="icard">
+    <h3>選完之後會怎麼進行？</h3>
+    <p>Beata 完成最終 10 題選擇後，Holymake 團隊會針對這 10 題進一步確認：回答是否符合真實經驗、哪些內容可以公開、是否有可搭配素材、現場要優先使用哪些主線問題與延伸追問。</p>
+    <p>大綱不是逐字背誦的台詞；拍攝時會由鏡頭後的人引導 Beata 用自己的語氣自然回答。</p>
+  </div>
+  <div class="cta-wrap">
+    <button class="cta-btn" onclick="document.querySelectorAll('.tab')[1].click()">我看完了，前往選題 →</button>
+    <p class="cta-hint">共 20 題候選，請選出 10 題</p>
+  </div>
+</div>
+
+<!-- 選題清單 -->
+<div id="topics" class="section">
+  <div class="progress-wrap">
+    <h3>選題進度</h3>
+    <p>請從 20 題中選出 10 題，並為每題設定狀態（本次想拍 / 可以備選 / 需要調整 / 本期不拍）。</p>
+    <div class="pb-row">
+      <div class="pb-track"><div class="pb-fill" id="pb-fill" style="width:0%"></div></div>
+      <div class="pb-count"><span id="pb-count">0</span> / 10</div>
+      <button class="pb-clear" onclick="clearAll()">清除全部</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <button class="fb active" onclick="filterTopics('all',this)">全部（20）</button>
+    <button class="fb" onclick="filterTopics('leadership',this)">人才／領導（5）</button>
+    <button class="fb" onclick="filterTopics('hjerte',this)">HJERTE（5）</button>
+    <button class="fb" onclick="filterTopics('customer',this)">顧客專業（5）</button>
+    <button class="fb" onclick="filterTopics('life',this)">生活／個性（5）</button>
+  </div>
+  <div id="topics-container"></div>
+  <div class="submit-wrap">
+    <label for="global-note">整體補充說明（選填）</label>
+    <textarea class="global-note" id="global-note" placeholder="如有任何想讓 Holymake 團隊了解的事情，請在這裡填寫…" rows="3"></textarea>
+    <button class="submit-btn" id="submit-btn" onclick="submitSelections()">送出選題回覆</button>
+    <p class="submit-hint">送出後資料將直接回寫至企劃表格，Holymake 團隊會盡快與你確認。</p>
+  </div>
+</div>
+
+<div class="footer"><p>© 2025 Holymake 吼莉內容行銷　版權所有 · LINE@ @holymake</p></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+const topics = [
+  {id:1,code:'T2-C001-001',cat:'leadership',
+   title:'主管最怕的，不是你犯錯',
+   desc:'從主管角度談：真正影響信任的，不只是犯錯，而是犯錯後怎麼處理、承擔與改善。',
+   memory:'Beata 看重的是一個人犯錯後的反應與承接能力。',
+   form:'藏鏡訪談＋匿名案例',
+   hook:'我不怕你犯錯，我怕的是你犯錯後還在等別人收拾。',
+   qi:'先反轉「主管最怕犯錯」的印象：真正影響信任的，是犯錯後的第一個反應。',
+   cheng:'說明她會看對方是否主動承認、先止損、回報並提出補救，而不是只解釋。',
+   zhuan:'用匿名案例對比「犯錯但能承接」與「錯不大卻一直等提醒」造成的不同結果。',
+   he:'零失誤不是成長標準，能不能把錯誤變成下一次的判斷，才是。',
+   main:['員工犯錯時，妳真正最在意的是什麼？'],
+   extend:['哪一種反應會讓妳願意繼續教？','哪一種反應會讓妳不敢再交事情？','有沒有一個不涉及姓名的例子？'],
+   rescue:['如果不談特定人，妳最常看到的兩種反應是什麼？','妳希望對方犯錯後先做的第一件事是什麼？'],
+   material:'工作空鏡、待辦清單、匿名案例時間線、關鍵字卡',
+   confirm:'案例可否匿名公開；避免影射特定員工。'},
+
+  {id:2,code:'T2-C001-002',cat:'leadership',
+   title:'真正想帶你的人，不只會說你哪裡錯',
+   desc:'拆解被教與被罵的差別，不只看語氣，而是有沒有標準、方法與下一步。',
+   memory:'Beata 直接，但她的帶人方式不是只指出錯誤，而是會說清楚如何改善。',
+   form:'對比口播＋情境演繹',
+   hook:'被罵跟被教，差別不一定是聲音大不大。',
+   qi:'從常見誤解切入：語氣溫柔不一定是在教，語氣直接也不一定只是罵。',
+   cheng:'拆成判斷標準：有沒有說清楚哪裡錯、標準是什麼、下一步怎麼改。',
+   zhuan:'演示兩句看似相似的主管說法，讓觀眾比較哪一句真的能幫助人成長。',
+   he:'真正的教，不只讓你知道錯，而是讓你知道下一次怎麼做。',
+   main:['妳認為「被教」和「被罵」最明顯的差別是什麼？'],
+   extend:['只是語氣比較溫柔就算在教嗎？','一個真正有效的提醒應該包含哪些內容？','妳自己講得很直接時，會怎麼避免只剩情緒？'],
+   rescue:['如果只能給一個判斷標準，妳會看對方有沒有得到什麼下一步？'],
+   material:'左右對比字卡、兩種主管說法、表情與語氣特寫',
+   confirm:'需由 Beata 本人定義差別，不使用預設答案。'},
+
+  {id:3,code:'T2-C001-003',cat:'leadership',
+   title:'想換團隊，除了薪水先問這 3 件事',
+   desc:'給想換團隊的人一份實用判斷清單：除了薪水，還要先看哪些成長與合作條件。',
+   memory:'Beata 不只看短期條件，也會看環境能不能讓一個人長期成長。',
+   form:'三點清單＋走動口播',
+   hook:'只問薪水，很容易換到一個更不適合你的地方。',
+   qi:'承認薪水重要，但指出工作能不能長久，還取決於其他條件。',
+   cheng:'由 Beata 提出三個最重視的確認項目，例如帶人方式、回饋、成長機會或工作文化。',
+   zhuan:'說明表面條件很好，若缺少透明標準與真實回饋，進去後仍可能卡住。',
+   he:'不是找條件最多的團隊，而是找你知道自己會怎麼成長的地方。',
+   main:['一個人想換團隊時，除了薪水，妳最希望他先問清楚哪三件事？'],
+   extend:['教育制度要怎麼判斷是真的存在？','怎麼看主管願不願意給回饋？','客源、成長與工作文化，妳會怎麼排序？'],
+   rescue:['如果只能提醒一件最容易被忽略的事，會是哪一件？'],
+   material:'三點清單、手機備忘錄、工作場景、走動鏡頭',
+   confirm:'確認三個正式項目。'},
+
+  {id:4,code:'T2-C001-004',cat:'leadership',
+   title:'被提醒之後，你做的下一步，比犯錯本身更重要',
+   desc:'用真實情境談：被提醒之後做了什麼，往往比當下犯了什麼錯更重要。',
+   memory:'Beata 觀察的是一個人是否能把提醒轉成自己的行動。',
+   form:'故事訪談＋案例時間線',
+   hook:'我真正記住的，通常不是你犯了什麼錯，而是你被提醒後做了什麼。',
+   qi:'從一個匿名情境開始，描述對方被提醒前的狀態。',
+   cheng:'說明對方被提醒後採取的具體行動，以及 Beata 為何從這些行動看見改變。',
+   zhuan:'對比只在當下說「知道了」，卻沒有形成新做法的情況。',
+   he:'成長不是聽懂提醒，而是讓別人下一次看見不同的行動。',
+   main:['妳有沒有遇過一個人，被提醒後真的讓妳看見改變？'],
+   extend:['他做了什麼讓妳覺得這次不一樣？','以前他卡在哪裡？','那個改變後來帶來什麼結果？'],
+   rescue:['如果沒有單一案例，可以談妳最常看到的「有改」和「沒改」差在哪裡。'],
+   material:'匿名案例時間線、工作 B-roll、前後差異字卡',
+   confirm:'案例需匿名；與第 1 題正式選題時宜二擇一。'},
+
+  {id:5,code:'T2-C001-005',cat:'leadership',
+   title:'同一句提醒，為什麼有人會成長、有人只覺得被針對？',
+   desc:'同一句提醒，為什麼有人會吸收調整，有人卻只覺得被針對？',
+   memory:'Beata 擅長觀察人，也會從反應判斷對方是否準備好成長。',
+   form:'雙情境演繹＋藏鏡問答',
+   hook:'同一句話，有人聽見方法，有人只聽見自己被否定。',
+   qi:'先演出兩種接收提醒的反應，建立衝突。',
+   cheng:'請 Beata 分享她如何分辨對方是在思考、不同意，還是進入防衛。',
+   zhuan:'補上主管責任：提醒若只有情緒、沒有標準，也不能把問題全推給員工。',
+   he:'成長需要願意接收，也需要對方把話說到能被行動。',
+   main:['同一句提醒，為什麼有人會成長，有人卻只覺得被針對？'],
+   extend:['妳通常從哪個反應看出差別？','防衛和真的不同意，有什麼不同？','主管又該怎麼確認自己不是只在發脾氣？'],
+   rescue:['能不能用兩個典型反應做對比？'],
+   material:'兩種反應演繹、對比字幕、工作情境',
+   confirm:'避免責備年輕員工；需有具體觀察。'},
+
+  {id:6,code:'T2-C001-006',cat:'hjerte',
+   title:'18 年都在同一個體系，為什麼我還要重新開始？',
+   desc:'談做了 18 年後仍想重新開始的原因，以及 HJERTE 真正想完成的是什麼。',
+   memory:'Beata 不是單純離開原本，而是想把還沒完成的理想做出來。',
+   form:'人物故事訪談＋職涯素材',
+   hook:'做了 18 年，最安全的選擇其實不是重新開始。',
+   qi:'交代 18 年累積與外界看到的穩定，建立重新開始的反差。',
+   cheng:'由 Beata 說明念頭何時出現，以及她還有哪個理想一直沒有真正完成。',
+   zhuan:'釐清重新開始不是否定過去，而是過去經驗讓她更知道下一階段想怎麼做。',
+   he:'有些重新開始，不是歸零，而是終於把累積帶到真正想去的地方。',
+   main:['做了 18 年之後，妳為什麼還會想重新開始？'],
+   extend:['這個念頭是什麼時候出現的？','妳真正想完成的是什麼？','這和否定原本的體系有什麼不同？'],
+   rescue:['如果不能談全部，妳最願意公開的一個原因是什麼？'],
+   material:'職涯舊照、時間線、籌備畫面、個人物件',
+   confirm:'拍攝前確認公開邊界與原體系表述。'},
+
+  {id:7,code:'T2-C001-007',cat:'hjerte',
+   title:'店還沒開，我先決定哪些事絕對不要做',
+   desc:'從品牌底線切入：在店還沒正式開始前，先決定哪些事不想做。',
+   memory:'Beata 建立品牌時，不只想做什麼，也很在意不要變成什麼樣子。',
+   form:'幕後紀錄＋手寫清單',
+   hook:'品牌開始前，我先寫的不是要做什麼，而是哪些事絕對不要做。',
+   qi:'展示手寫清單或籌備筆記，從一項底線切入。',
+   cheng:'說明這項底線來自什麼經驗，以及它會影響哪些未來決策。',
+   zhuan:'承認堅持底線可能更慢、更麻煩，但為何仍值得。',
+   he:'品牌不是把所有好事都放進來，而是清楚知道自己不能變成什麼。',
+   main:['HJERTE 還沒正式開始前，妳已經確定哪些事不想做？'],
+   extend:['為什麼這些事情對妳很重要？','這和過去經驗有什麼關係？','哪些原則是即使很難也不想放掉的？'],
+   rescue:['如果還沒整理完整，先談一件妳最確定不想做的事。'],
+   material:'手寫清單、籌備筆記、空間局部、刪除與保留項目',
+   confirm:'需有本人明確內容；避免影射原體系。'},
+
+  {id:8,code:'T2-C001-008',cat:'hjerte',
+   title:'做新品牌，不是因為原本不好，而是我還有一種工作方式想實現',
+   desc:'說明做新品牌不是因為原本不好，而是還有一種工作或服務方式想親自實現。',
+   memory:'HJERTE 想承接的是 Beata 尚未完成的一種工作想像。',
+   form:'觀點口播＋籌備畫面',
+   hook:'做新品牌，不一定是原本不好，有時只是你還有一種做法沒被實現。',
+   qi:'先處理外界可能的誤解：另起品牌不等於否定原本。',
+   cheng:'由 Beata 說明她想實現的一種工作或服務感受，以及為何重要。',
+   zhuan:'把抽象理想轉成一個可感受到的情境，但不承諾尚未完成的制度或服務。',
+   he:'HJERTE 不是逃離過去，而是把還沒做完的想法真正做出來。',
+   main:['妳還想實現的那一種工作方式，具體是什麼？'],
+   extend:['對顧客來說會有什麼不同？','對未來一起工作的人又代表什麼？','這件事為什麼值得妳重新開始？'],
+   rescue:['如果不談制度，只談妳最想保留的一種感受，會是什麼？'],
+   material:'品牌筆記、籌備畫面、走動空鏡',
+   confirm:'不可帶入未確認的制度、徵才、價格或服務承諾。'},
+
+  {id:9,code:'T2-C001-009',cat:'customer',
+   title:'你不是選不出髮型，是還沒說出你最怕什麼',
+   desc:'很多顧客不是選不出髮型，而是還沒說出自己最害怕的結果。',
+   memory:'Beata 會從表情與顧慮找出顧客真正不敢說的事。',
+   form:'顧客情境演繹＋藏鏡問答',
+   hook:'妳不是沒有喜歡的髮型，妳只是還沒說出最怕哪個結果。',
+   qi:'模擬顧客說「都可以」，但表情仍然猶豫的情境。',
+   cheng:'列出怕顯老、怕難整理、怕剪太短或怕維護麻煩等常見顧慮。',
+   zhuan:'示範同一個想法，在不同害怕結果下，設計師會給出完全不同的建議。',
+   he:'不用先知道自己適合什麼，先說清楚最不能接受什麼。',
+   main:['顧客說「都可以」時，妳會先問她最怕什麼嗎？'],
+   extend:['最常見的害怕結果有哪些？','顧客說不清楚時，妳怎麼追問？','知道最怕什麼之後，妳的建議會怎麼改變？'],
+   rescue:['可以用「怕顯老、怕難整理、怕太短」示範差別。'],
+   material:'常見顧慮字卡、模擬諮詢、鏡前畫面',
+   confirm:'可使用常見情境，不需揭露特定顧客。'},
+
+  {id:10,code:'T2-C001-010',cat:'customer',
+   title:'帶參考圖來，我第一個看的不是髮型',
+   desc:'顧客帶參考圖時，先看的不只是髮型，而是本人條件、生活習慣與真正想改變的地方。',
+   memory:'Beata 不照抄參考圖，而是把參考圖拆成能適合本人生活的版本。',
+   form:'參考圖實物示範＋模擬諮詢',
+   hook:'妳帶參考圖來，我第一個看的其實不是那個髮型。',
+   qi:'拿出參考圖，先問觀眾以為設計師會看什麼。',
+   cheng:'說明真正會先確認的條件：髮況、基底、生活習慣、維護與喜歡的元素。',
+   zhuan:'示範把一張圖拆成長度、輪廓、顏色、捲度或氛圍，再重組成適合本人的版本。',
+   he:'參考圖不是成果保證，而是幫我們說清楚妳真正想要什麼。',
+   main:['顧客帶參考圖來時，妳第一個看的到底是什麼？'],
+   extend:['妳會先拆哪幾個元素？','哪些條件最容易讓成果和照片不同？','怎麼問出她真正喜歡的是哪一部分？'],
+   rescue:['可以拿一張示意圖，現場示範妳會先問什麼。'],
+   material:'合法參考圖、自家作品、手機、鏡前諮詢',
+   confirm:'參考圖須可使用；或改用自家作品示意。'},
+
+  {id:11,code:'T2-C001-011',cat:'customer',
+   title:'第一次找設計師，先講這三件事',
+   desc:'教第一次找新設計師的顧客，在諮詢前先說清楚三件事。',
+   memory:'Beata 能把顧客模糊需求轉成設計師可執行的條件。',
+   form:'三點清單＋預約前檢查',
+   hook:'第一次找新設計師，不用先學會專業術語，先講清楚這三件事。',
+   qi:'降低顧客壓力：不需要懂髮型名稱，也能做好諮詢。',
+   cheng:'由 Beata 提出三項正式內容，例如不能接受的結果、整理時間、預算或改變幅度。',
+   zhuan:'說明少講一項可能造成什麼落差，並示範更容易理解的說法。',
+   he:'好的溝通不是講得專業，而是讓設計師知道妳怎麼生活、在意什麼。',
+   main:['第一次找新設計師，妳最希望顧客先說清楚哪三件事？'],
+   extend:['最不能接受的結果要怎麼說？','平常整理時間為什麼重要？','預算和可接受改變幅度要怎麼談？'],
+   rescue:['如果顧客只能記住一句話，妳會請她先說哪件事？'],
+   material:'三點清單、手機備忘錄、諮詢畫面',
+   confirm:'腳本前由 Beata 確認正式三項。'},
+
+  {id:12,code:'T2-C001-012',cat:'customer',
+   title:'髮型做完很漂亮，為什麼你還是不滿意？',
+   desc:'髮型看起來很漂亮，顧客卻仍不滿意，可能是因為不像自己或不符合日常生活。',
+   memory:'Beata 不只看完成照，也在意顧客回家後是否真的喜歡與能維持。',
+   form:'匿名案例拆解＋情境畫面',
+   hook:'髮型做得很漂亮，不代表顧客一定會喜歡。',
+   qi:'提出反差：完成照好看，但顧客回家後仍覺得不對。',
+   cheng:'拆解可能落差：不像自己、整理負擔太高、生活場合不合或期待沒說清楚。',
+   zhuan:'用匿名案例說明問題不一定出在技術，而可能出在諮詢與生活條件沒有被納入。',
+   he:'真正適合的髮型，不只在鏡頭裡漂亮，也要回到妳的生活裡。',
+   main:['髮型明明做得很漂亮，為什麼顧客還是可能不滿意？'],
+   extend:['「不像自己」通常會怎麼表現？','整理能力和生活習慣會造成什麼落差？','妳怎麼在事前降低這種情況？'],
+   rescue:['如果不方便說案例，可以談最常見的三種落差。'],
+   material:'匿名案例、日常整理畫面、完成照與生活情境對比',
+   confirm:'案例及照片需確認授權。'},
+
+  {id:13,code:'T2-C001-013',cat:'customer',
+   title:'想剪短前，我會先問你：想換造型，還是想解決現在的困擾？',
+   desc:'顧客突然想剪短時，不急著動剪刀，而是先問清楚她真正想解決什麼。',
+   memory:'Beata 會把衝動改變轉成可判斷的需求，而不是直接照做。',
+   form:'模擬諮詢＋長短髮示意',
+   hook:'客人一坐下說要剪短，我通常不會立刻拿剪刀。',
+   qi:'模擬顧客突然想剪短，Beata 先停下來追問。',
+   cheng:'確認想解決的是受損、悶熱、難整理、想改變，還是單純喜歡短髮。',
+   zhuan:'同樣是想剪短，不同原因會導向不同長度、層次或甚至暫緩。',
+   he:'先找到妳真正想改變的問題，才知道是不是一定要剪短。',
+   main:['顧客突然說想剪短時，妳為什麼不會立刻拿剪刀？'],
+   extend:['妳會先問哪兩到三個問題？','怎麼判斷她是想換造型，還是想解決現在的困擾？','什麼情況會建議先不要剪？'],
+   rescue:['可以直接示範妳最常問的第一句。'],
+   material:'長短髮示意、模擬諮詢、可接受改變幅度量表',
+   confirm:'避免心理診斷；聚焦實際需求與生活條件。'},
+
+  {id:14,code:'T2-C001-014',cat:'life',
+   title:'我不是脾氣好，我只是知道什麼值得生氣',
+   desc:'用真實生活事件談：不是沒有脾氣，而是知道哪些事情值得投入情緒。',
+   memory:'Beata 的直接不是什麼都生氣，而是她對事情有明確判斷。',
+   form:'人物故事訪談＋日常畫面',
+   hook:'我不是脾氣好，我只是後來知道，不是每件事都值得浪費情緒。',
+   qi:'從一個真實事件開始，說明以前會在意、現在卻選擇放下的事。',
+   cheng:'分享 Beata 判斷「值得處理」與「不值得消耗」的標準。',
+   zhuan:'再補一件她一定會表態的事情，讓觀眾看見放下不等於沒有原則。',
+   he:'成熟不是什麼都不生氣，而是把情緒留給真正重要的事。',
+   main:['妳說自己不是脾氣好，而是知道什麼值得生氣，這句話來自哪件事？'],
+   extend:['有哪件事妳後來選擇不生氣？','又有什麼事情妳一定會表態？','妳怎麼判斷值不值得浪費情緒？'],
+   rescue:['沒有單一事件時，可以談工作與生活中各一種情況。'],
+   material:'人物近景、日常空鏡、事件關鍵字卡',
+   confirm:'缺具體事件時不硬拍。'},
+
+  {id:15,code:'T2-C001-015',cat:'life',
+   title:'我看劇最常想的，不是劇情，是這個人為什麼這樣做',
+   desc:'別人追劇看結局，Beata 會觀察角色為什麼做出那個選擇，並連回工作、人性或關係。',
+   memory:'Beata 對人性的興趣，也影響她如何看顧客與團隊。',
+   form:'興趣分享＋人物觀察筆記',
+   hook:'別人看劇在猜結局，我常常在想：這個人為什麼會做這個選擇？',
+   qi:'從一個角色行為或常見劇情情境切入。',
+   cheng:'由 Beata 說明她會觀察角色說了什麼、沒說什麼、表情或反應。',
+   zhuan:'連回她在工作中如何理解顧客與團隊，但觀察不等於替別人下診斷。',
+   he:'我研究人性，不是為了看穿別人，而是提醒自己不要只聽表面那一句話。',
+   main:['妳看劇時，最常觀察角色的哪一件事？'],
+   extend:['有沒有一個角色讓妳一直在想他為什麼這樣做？','這個觀察和妳看團隊或顧客有什麼連結？','妳通常先看他說什麼，還是先看他怎麼反應？'],
+   rescue:['可以不說作品名稱，只描述一種角色行為。'],
+   material:'自製人物筆記、關係圖、日常追劇畫面',
+   confirm:'不直接使用未授權戲劇片段。'},
+
+  {id:16,code:'T2-C001-016',cat:'life',
+   title:'追星不是浪費時間，我是在保留喜歡一件事的能力',
+   desc:'從追星或旅行故事談：長大後仍願意真心喜歡一件事，是保留生活熱情的一種能力。',
+   memory:'Beata 不只工作很有行動力，對喜歡的事也會認真投入。',
+   form:'照片回顧＋物件訪談',
+   hook:'長大後還能很喜歡一件事，我覺得不是幼稚，是一種能力。',
+   qi:'從票券、照片或行程表開始，講一次 Beata 為喜歡的事投入很多準備的經驗。',
+   cheng:'分享她如何安排行程、做功課或為一場活動排出時間。',
+   zhuan:'把這份投入連回工作與人生：不是每件事都只用效率或金錢衡量。',
+   he:'追星不是逃離生活，而是提醒自己不要失去真心喜歡的能力。',
+   main:['妳為了一場演唱會或一次旅行，曾經把行程安排到多細？'],
+   extend:['妳做過最誇張或最認真的準備是什麼？','為什麼這件事對妳不是浪費時間？','這種投入和妳工作的方式像不像？'],
+   rescue:['可以拿一張照片、票券或行程表，從那個物件開始講。'],
+   material:'本人照片、票券、行程表、收藏物、旅行紀錄',
+   confirm:'素材需可公開並注意第三方版權。'},
+
+  {id:17,code:'T2-C001-017',cat:'hjerte',
+   title:'HJERTE 這個名字，藏著我為什麼想做這個品牌',
+   desc:'從 HJERTE 的名字出發，分享這個名稱為什麼被選中，以及它想提醒自己不要忘記什麼。',
+   memory:'HJERTE 的名字可能成為品牌最早被記住的情感入口。',
+   form:'命名故事＋手稿展示',
+   hook:'HJERTE 不是一個隨便選的名字，它其實藏著我為什麼想做這個品牌。',
+   qi:'展示名稱或早期手稿，說明命名不是從 Logo 開始。',
+   cheng:'由 Beata 說出名稱的正式來源、含義，以及選名時最在意的感受。',
+   zhuan:'連回品牌想提醒自己的事情，但不把未完成的服務或制度寫成既定承諾。',
+   he:'這個名字不只是讓別人記住，也是提醒我不要離開最初的原因。',
+   main:['HJERTE 這個名字是怎麼來的？'],
+   extend:['這個字對妳真正代表什麼？','為什麼不是選一個更直白的名字？','妳希望每次看到它時提醒自己什麼？'],
+   rescue:['如果完整故事還不能說，可以只談選名字時最在意的感受。'],
+   material:'品牌手稿、命名版本、筆記本、Logo 局部',
+   confirm:'未確認正式來源與含義前不可拍。'},
+
+  {id:18,code:'T2-C001-018',cat:'hjerte',
+   title:'品牌還沒準備好，我為什麼還是決定開始記錄？',
+   desc:'談品牌尚未完全準備好，為什麼仍想開始記錄，讓大家看見它一步一步被做出來。',
+   memory:'Beata 願意讓觀眾看見品牌不是一夜完成，而是經過很多取捨。',
+   form:'籌備 Vlog＋邊走邊聊',
+   hook:'品牌還沒準備好，我卻決定從現在就開始記錄。',
+   qi:'用一段真實籌備片段切入，承認目前仍有很多未完成。',
+   cheng:'說明想記錄的是哪些選擇、修改與過程，而不是假裝一切都已確定。',
+   zhuan:'談她願意公開什麼、不公開什麼，以及記錄對自己或觀眾的意義。',
+   he:'品牌不是開幕那天才開始，它從每一次認真做決定時就開始了。',
+   main:['品牌還沒準備好，妳為什麼還是想開始記錄？'],
+   extend:['妳想讓大家看見什麼過程？','哪些不確定也願意公開？','哪些內容現在還不能說？'],
+   rescue:['可以從今天正在處理的一件小事開始講。'],
+   material:'一週籌備片段、會議桌、修改紀錄、空間局部',
+   confirm:'拍攝前先確認可公開範圍。'},
+
+  {id:19,code:'T2-C001-019',cat:'life',
+   title:'快狠準不是衝動，是我先把不重要的刪掉',
+   desc:'拆解 Beata 的快狠準：不是衝動，而是如何快速判斷重要與不重要。',
+   memory:'Beata 的快狠準背後，是她有一套刪除雜訊與做決定的方式。',
+   form:'方法示範＋決策清單',
+   hook:'我做決定很快，不是因為沒想，而是我先把不重要的刪掉。',
+   qi:'拿一個近期真實選擇，呈現看似很多選項的狀態。',
+   cheng:'由 Beata 示範她先排除哪些條件，以及真正留下的判斷標準。',
+   zhuan:'說明快狠準不是所有事都要快，重要的是先知道最不能犧牲什麼。',
+   he:'決定快，不是答案都知道，而是知道什麼不用再想。',
+   main:['妳做決定很快，是因為不想太多，還是有自己的判斷方法？'],
+   extend:['妳通常先刪掉什麼？','遇到兩個都想要的選項時怎麼選？','有沒有一個最近的真實決定？'],
+   rescue:['可以拿一個工作或生活選擇，現場示範妳怎麼判斷。'],
+   material:'決策清單、手機備忘錄、選項比較、真實案例',
+   confirm:'至少需要一個可公開的真實決策。'},
+
+  {id:20,code:'T2-C001-020',cat:'life',
+   title:'錢很重要，但只剩錢的事，我做不久',
+   desc:'不是不在乎錢，而是不希望工作與人生只剩下金錢；分享如何判斷一件事值不值得投入。',
+   memory:'Beata 重視成果，也重視一件事是否值得、能不能帶來成長與快樂。',
+   form:'走動口播＋生活選擇故事',
+   hook:'錢很重要，但一件事如果只剩錢，我通常做不久。',
+   qi:'先承認現實：工作與選擇不能完全不談錢。',
+   cheng:'分享一個不是只因為收入，仍願意投入的真實選擇，以及她看見的其他價值。',
+   zhuan:'再談什麼情況即使有報酬也不願意做，呈現她的判斷邊界。',
+   he:'我不是不重視錢，而是不想把有限的人生，只換成一個數字。',
+   main:['妳說錢很重要，但只剩錢的事做不久，這句話背後有什麼經驗？'],
+   extend:['有沒有一件事不是為了錢，妳還是很願意做？','妳會怎麼判斷一件事值不值得投入？','什麼狀況下即使有錢，妳也不想做？'],
+   rescue:['不談特定公司或合作，可以只談妳自己的判斷原則。'],
+   material:'工作與生活切換、旅行或咖啡物件、選擇前後對照',
+   confirm:'避免影射現職、合作、薪資或財務狀況。'},
+];
+
+const catMeta={
+  leadership:{label:'人才／領導',cls:'tag-leadership'},
+  hjerte:{label:'HJERTE',cls:'tag-hjerte'},
+  customer:{label:'顧客專業',cls:'tag-customer'},
+  life:{label:'生活／個性',cls:'tag-life'},
+};
+const statusOpts=[
+  {key:'want',label:'本次想拍',cls:'chosen-want'},
+  {key:'backup',label:'可以備選',cls:'chosen-backup'},
+  {key:'adjust',label:'需要調整',cls:'chosen-adjust'},
+  {key:'skip',label:'本期不拍',cls:'chosen-skip'},
+];
+const catOrder=['leadership','hjerte','customer','life'];
+const catLabels={
+  leadership:'人才／領導（建議選 3 題）',
+  hjerte:'HJERTE（建議選 2 題）',
+  customer:'顧客專業（建議選 3 題）',
+  life:'生活／個性（建議選 2 題）',
+};
+
+let selections={};
+let currentFilter='all';
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');btn.classList.add('active');
+}
+
+function filterTopics(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tc').forEach(card=>{
+    if(cat==='all'||card.dataset.cat===cat)card.classList.remove('hidden');
+    else card.classList.add('hidden');
+  });
+  document.querySelectorAll('.cat-div').forEach(d=>{
+    if(cat==='all'||d.dataset.cat===cat)d.style.display='';
+    else d.style.display='none';
+  });
+}
+
+function scriptHTML(t){
+  return `
+    <div class="acc-field">
+      <label>Hook（開場鉤子）</label>
+      <div class="script-block">
+        <div class="hook-item">「${t.hook}」</div>
+      </div>
+    </div>
+    <div class="acc-field">
+      <label>腳本結構</label>
+      <div class="script-block">
+        <div class="script-step">
+          <div class="step-label s-qi">起｜0–5秒</div>
+          <div class="step-content">${t.qi}</div>
+        </div>
+        <div class="script-step">
+          <div class="step-label s-cheng">承｜5–18秒</div>
+          <div class="step-content">${t.cheng}</div>
+        </div>
+        <div class="script-step">
+          <div class="step-label s-zhuan">轉｜18–48秒</div>
+          <div class="step-content">${t.zhuan}</div>
+        </div>
+        <div class="script-step">
+          <div class="step-label s-he">合｜48–60秒</div>
+          <div class="step-content">${t.he}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTopics(){
+  let html='';
+  catOrder.forEach(cat=>{
+    const list=topics.filter(t=>t.cat===cat);
+    html+=`<div class="cat-div ${cat}" data-cat="${cat}">${catLabels[cat]}</div><div class="grid">`;
+    list.forEach(t=>{
+      const sel=selections[t.id];const isSel=!!sel;const cm=catMeta[t.cat];
+      html+=`
+      <div class="tc${isSel?' selected':''}" id="tc${t.id}" data-cat="${t.cat}">
+        <div class="tc-top">
+          <div class="tc-meta">
+            <span class="tc-code">${t.code}</span>
+            <span class="tc-tag ${cm.cls}">${cm.label}</span>
+          </div>
+          <div class="tc-title">${t.title}</div>
+          <div class="tc-memory">${t.memory}</div>
+          <div class="tc-desc">${t.desc}</div>
+          <div class="tc-form">${t.form}</div>
+        </div>
+        <button class="acc-toggle" onclick="toggleAcc(${t.id},event)">
+          <span>查看腳本大綱與提問句</span>
+          <span class="acc-chev" id="chev${t.id}">▾</span>
+        </button>
+        <div class="acc-body" id="acc${t.id}">
+          ${scriptHTML(t)}
+          <div class="acc-field"><label>主線問題</label><div class="q-list">${t.main.map(q=>`<div class="q-item">🎙 ${q}</div>`).join('')}</div></div>
+          <div class="acc-field"><label>延伸問題</label><div class="q-list">${t.extend.map(q=>`<div class="q-item">↳ ${q}</div>`).join('')}</div></div>
+          <div class="acc-field"><label>補救追問</label><div class="q-list">${t.rescue.map(q=>`<div class="q-item q-rescue">⚡ ${q}</div>`).join('')}</div></div>
+          <div class="acc-field"><label>畫面與素材</label><p>${t.material}</p></div>
+          <div class="acc-field"><label>拍攝前待確認</label><div class="q-list"><div class="q-item q-confirm">✅ ${t.confirm}</div></div></div>
+        </div>
+        <label class="tc-check-row">
+          <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect(${t.id},this)">
+          <span>選擇此題</span>
+        </label>
+        <div class="tc-status-row">
+          <span class="status-lbl">此題狀態</span>
+          <div class="st-btns">
+            ${statusOpts.map(s=>`<button class="st-btn${sel&&sel.status===s.key?' '+s.cls:''}" onclick="setStatus(${t.id},'${s.key}',this)">${s.label}</button>`).join('')}
+          </div>
+        </div>
+        <div class="tc-note-wrap">
+          <textarea class="tc-note" placeholder="補充說明（選填）" oninput="updateNote(${t.id},this.value)">${sel?sel.note||'':''}</textarea>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('topics-container').innerHTML=html;
+  updateCounter();
+  if(currentFilter!=='all')filterTopics(currentFilter,document.querySelector('.fb.active'));
+}
+
+function toggleAcc(id,e){
+  e.stopPropagation();
+  const body=document.getElementById('acc'+id);const chev=document.getElementById('chev'+id);
+  const open=body.classList.toggle('open');chev.style.transform=open?'rotate(180deg)':'';
+}
+function toggleSelect(id,el){
+  const total=Object.keys(selections).length;
+  if(el.checked&&total>=10){el.checked=false;showToast('最多選 10 題，請先取消其他題目');return;}
+  if(el.checked){selections[id]={status:'',note:''};document.getElementById('tc'+id).classList.add('selected');}
+  else{delete selections[id];document.getElementById('tc'+id).classList.remove('selected');}
+  updateCounter();
+}
+function setStatus(id,status,btn){
+  if(!selections[id])return;selections[id].status=status;
+  btn.closest('.st-btns').querySelectorAll('.st-btn').forEach(b=>{statusOpts.forEach(s=>b.classList.remove(s.cls));});
+  const cls=statusOpts.find(s=>s.key===status)?.cls;if(cls)btn.classList.add(cls);
+}
+function updateNote(id,val){if(selections[id])selections[id].note=val;}
+function updateCounter(){
+  const n=Object.keys(selections).length;
+  document.getElementById('pb-count').textContent=n;
+  document.getElementById('pb-fill').style.width=(n/10*100)+'%';
+}
+function clearAll(){
+  if(!confirm('確定要清除所有已選題目嗎？'))return;
+  selections={};renderTopics();
+}
+async function submitSelections(){
+  const total=Object.keys(selections).length;
+  if(total===0){showToast('請至少選擇 1 題');return;}
+  const noStatus=Object.entries(selections).filter(([,s])=>!s.status);
+  if(noStatus.length>0){showToast(`還有 ${noStatus.length} 題未設定狀態`);return;}
+  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='送出中…';
+  const topicMap={};topics.forEach(t=>topicMap[t.id]=t);
+  const payload={
+    timestamp:new Date().toISOString(),clientCode:'C001',periodCode:'T2',version:'v1',totalCount:total,
+    selections:Object.entries(selections).map(([id,s])=>({
+      id:Number(id),code:topicMap[id]?.code||'',title:topicMap[id]?.title||'',status:s.status,note:s.note||'',
+    })),
+    globalNote:document.getElementById('global-note').value.trim(),
+  };
+  try{
+    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
+    const json=await res.json();
+    if(json.success){showToast('✓ 已成功送出！Holymake 團隊會盡快與你確認。');btn.textContent='已送出 ✓';}
+    else throw new Error(json.message||'未知錯誤');
+  }catch(err){showToast('送出失敗：'+err.message);btn.disabled=false;btn.textContent='送出選題回覆';}
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+renderTopics();
+</script>
+</body>
+</html>

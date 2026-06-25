@@ -771,10 +771,16 @@ async function submitSelections(){
     globalNote:document.getElementById('global-note').value.trim(),
   };
   try{
-    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
-    const json=await res.json();
-    if(json.success){showToast('✓ 已成功送出！Holymake 團隊會盡快與你確認。');btn.textContent='已送出 ✓';}
-    else throw new Error(json.message||'未知錯誤');
+    // 用 no-cors 送出，避免 CORS 預檢問題
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      body:JSON.stringify(payload),
+      headers:{'Content-Type':'text/plain'},
+    });
+    // no-cors 模式無法讀取回應，送出不報錯即視為成功
+    showToast('✓ 已成功送出！Holymake 團隊會盡快與你確認。');
+    btn.textContent='已送出 ✓';
   }catch(err){showToast('送出失敗：'+err.message);btn.disabled=false;btn.textContent='送出選題回覆';}
 }
 function showToast(msg){

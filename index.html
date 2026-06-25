@@ -147,17 +147,7 @@ body{font-family:'DM Sans','Noto Serif TC',sans-serif;background:var(--bg);color
 .tc-check-row span{font-size:12px;color:var(--muted2)}
 .tc.selected .tc-check-row{background:rgba(224,112,48,0.04)}
 
-/* STATUS */
-.tc-status-row{padding:10px 17px;border-top:1px solid var(--border);display:none}
-.tc.selected .tc-status-row{display:block}
-.status-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:7px;display:block}
-.st-btns{display:flex;gap:6px;flex-wrap:wrap}
-.st-btn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid var(--border-md);background:var(--offwhite);color:var(--muted2);border-radius:6px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
-.st-btn:hover{border-color:var(--brown)}
-.st-btn.chosen-want{background:var(--orange);color:#fff;border-color:var(--orange)}
-.st-btn.chosen-backup{background:var(--sage);color:#fff;border-color:var(--sage)}
-.st-btn.chosen-adjust{background:var(--yellow);color:var(--dark);border-color:var(--yellow)}
-.st-btn.chosen-skip{background:var(--muted2);color:#fff;border-color:var(--muted2)}
+
 
 /* NOTE */
 .tc-note-wrap{padding:0 17px 14px;display:none}
@@ -634,12 +624,7 @@ const catMeta={
   customer:{label:'顧客專業',cls:'tag-customer'},
   life:{label:'生活／個性',cls:'tag-life'},
 };
-const statusOpts=[
-  {key:'want',label:'本次想拍',cls:'chosen-want'},
-  {key:'backup',label:'可以備選',cls:'chosen-backup'},
-  {key:'adjust',label:'需要調整',cls:'chosen-adjust'},
-  {key:'skip',label:'本期不拍',cls:'chosen-skip'},
-];
+
 const catOrder=['leadership','hjerte','customer','life'];
 const catLabels={
   leadership:'人才／領導（建議選 3 題）',
@@ -737,12 +722,7 @@ function renderTopics(){
           <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect(${t.id},this)">
           <span>選擇此題</span>
         </label>
-        <div class="tc-status-row">
-          <span class="status-lbl">此題狀態</span>
-          <div class="st-btns">
-            ${statusOpts.map(s=>`<button class="st-btn${sel&&sel.status===s.key?' '+s.cls:''}" onclick="setStatus(${t.id},'${s.key}',this)">${s.label}</button>`).join('')}
-          </div>
-        </div>
+
         <div class="tc-note-wrap">
           <textarea class="tc-note" placeholder="補充說明（選填）" oninput="updateNote(${t.id},this.value)">${sel?sel.note||'':''}</textarea>
         </div>
@@ -763,15 +743,11 @@ function toggleAcc(id,e){
 function toggleSelect(id,el){
   const total=Object.keys(selections).length;
   if(el.checked&&total>=10){el.checked=false;showToast('最多選 10 題，請先取消其他題目');return;}
-  if(el.checked){selections[id]={status:'',note:''};document.getElementById('tc'+id).classList.add('selected');}
+  if(el.checked){selections[id]={note:''};document.getElementById('tc'+id).classList.add('selected');}
   else{delete selections[id];document.getElementById('tc'+id).classList.remove('selected');}
   updateCounter();
 }
-function setStatus(id,status,btn){
-  if(!selections[id])return;selections[id].status=status;
-  btn.closest('.st-btns').querySelectorAll('.st-btn').forEach(b=>{statusOpts.forEach(s=>b.classList.remove(s.cls));});
-  const cls=statusOpts.find(s=>s.key===status)?.cls;if(cls)btn.classList.add(cls);
-}
+
 function updateNote(id,val){if(selections[id])selections[id].note=val;}
 function updateCounter(){
   const n=Object.keys(selections).length;
@@ -785,14 +761,12 @@ function clearAll(){
 async function submitSelections(){
   const total=Object.keys(selections).length;
   if(total===0){showToast('請至少選擇 1 題');return;}
-  const noStatus=Object.entries(selections).filter(([,s])=>!s.status);
-  if(noStatus.length>0){showToast(`還有 ${noStatus.length} 題未設定狀態`);return;}
   const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='送出中…';
   const topicMap={};topics.forEach(t=>topicMap[t.id]=t);
   const payload={
     timestamp:new Date().toISOString(),clientCode:'C001',periodCode:'T2',version:'v1',totalCount:total,
     selections:Object.entries(selections).map(([id,s])=>({
-      id:Number(id),code:topicMap[id]?.code||'',title:topicMap[id]?.title||'',status:s.status,note:s.note||'',
+      id:Number(id),code:topicMap[id]?.code||'',title:topicMap[id]?.title||'',checked:true,note:s.note||'',
     })),
     globalNote:document.getElementById('global-note').value.trim(),
   };
